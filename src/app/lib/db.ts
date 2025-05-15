@@ -1,7 +1,9 @@
 import mongoose from "mongoose"
 
 export default async function connect() {
+
     try {
+
         const url = process.env.DATABASE_URL
 
         if(!url){
@@ -30,21 +32,13 @@ export default async function connect() {
                 maxPoolSize : 10
             }
             
-            cached.promise = mongoose
-            .connect(url, opts)
-            .then(() => mongoose.connection)
-        }
-        
-        try {
-            cached.conn = await cached.promise
-        } catch (error:unknown) {
-            cached.promise = null
-            throw error
+            cached.promise =  mongoose.connect(url, opts).then(() => mongoose.connection)
         }
 
+        cached.conn = await cached.promise
         return cached.conn
     
     } catch (error) {
-        console.log('E:// Error is occured in connecting to db')
+        console.log('E:// Error is occured in connecting to db',error)
     }
 }

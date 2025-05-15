@@ -48,5 +48,7 @@ export default withAuth(
 // kha kha middleware run hona chahiye
 
 export const config = {
-    matcher: ["/upload", "/profile", "/my-videos","/login","/signup"],
+    matcher: [
+        "/home","/upload","/login","/signup","/contribute"
+    ],
 };

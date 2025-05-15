@@ -13,12 +13,25 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { signIn } from "next-auth/react"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+
+interface DataProps{
+    email : string,
+    password : string
+}
 
 export default function SignUp(){
 
-    const form = useForm()
+    const form = useForm({
+        defaultValues:{
+            email : "",
+            password: ""
+        }
+    })
+    const router = useRouter()
 
-    const onSubmit = async (data : any) => {
+    const onSubmit = async (data : DataProps) => {
         
         const result = await signIn("credentials", {
             redirect: false,
@@ -26,7 +39,12 @@ export default function SignUp(){
             password : data.password
         })
 
-        console.log(result)
+        if(result?.status === 400 || result?.status === 404 || result?.status === 402){
+            return toast.error('Invalid Credentials')
+        }
+
+        toast.success('Logged In Successfully')
+        router.push('/')
     }
 
     return (
@@ -72,18 +90,25 @@ export default function SignUp(){
                             />
                              <div className="mt-6 space-y-2">
                                 <Button
-                                variant="outline"
-                                className="w-full flex items-center gap-2 justify-center border-violet-300 dark:border-violet-600 text-violet-900 dark:text-violet-100 hover:bg-violet-50 dark:hover:bg-violet-900"
-                                onClick={() => signIn("google")}
+                                    variant="outline"
+                                    className="w-full flex items-center gap-2 justify-center border-violet-300 dark:border-violet-600 text-violet-900 dark:text-violet-100 hover:bg-violet-50 dark:hover:bg-violet-900"
+                                    onClick={
+                                        () => signIn("google").then(() => {
+                                            toast.success('Logged In Successfully')
+                                        })
+                                        
+                                    }
                                 >
                                 <BsGoogle className="w-5 h-5" />
-                                Continue with Google
+                                    Continue with Google
                                 </Button>
 
                                 <Button
-                                variant="outline"
-                                className="w-full flex items-center gap-2 justify-center border-violet-300 dark:border-violet-600 text-violet-900 dark:text-violet-100 hover:bg-violet-50 dark:hover:bg-violet-900"
-                                onClick={() => signIn("github")}
+                                    variant="outline"
+                                    className="w-full flex items-center gap-2 justify-center border-violet-300 dark:border-violet-600 text-violet-900 dark:text-violet-100 hover:bg-violet-50 dark:hover:bg-violet-900"
+                                    onClick={() => signIn("github").then(() => {
+                                        toast.success('Logged In Successfully')
+                                    })}
                                 >
                                 <BsGithub className="w-5 h-5" />
                                     Continue with GitHub

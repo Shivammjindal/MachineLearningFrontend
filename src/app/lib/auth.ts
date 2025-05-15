@@ -3,7 +3,7 @@ import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google";
 import { User } from "@/models/User";
 import connect from "./db";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs"
 import Credentials from "next-auth/providers/credentials";
 
 export const authOptions : NextAuthOptions = {
@@ -15,7 +15,9 @@ export const authOptions : NextAuthOptions = {
                 email: { label: "Email", type: "text", placeholder: "Email" },
                 password: { label: "Password", type: "password", placeholder: "Password" }
             },
-            async authorize(credentials) {
+            async authorize(credentials, req) {
+
+                console.log('checking credentials', credentials, req)
                 
                 // Vaidate credentials by Loggin in next-auth using own email and password
                 if(!credentials?.email || !credentials?.password){
@@ -33,13 +35,14 @@ export const authOptions : NextAuthOptions = {
                 }
 
                 //varyfying password
+                console.log(credentials.password , " and " , existingUser.password)
                 const match = await bcrypt.compare(credentials?.password, existingUser?.password)
+                console.log(match)
 
                 if(!match){
                     // string you pass in error must start with negative word
                     return null
                 }
-
 
                 return {
                     id: existingUser._id.toString(),
@@ -58,6 +61,29 @@ export const authOptions : NextAuthOptions = {
         }),
     ],
     callbacks : {
+        async signIn({user, account}){
+
+            await connect()
+            
+            if(account?.type === "oauth"){
+
+                const existingUser = await User.findOne({
+                    email : user.email
+                })
+
+                if(existingUser){
+                    return true;
+                }
+
+                await User.create({
+                    email : user.email,
+                })
+
+                return true;
+            }
+
+            return true
+        },
         async jwt({token, user}){
             
             if(user){

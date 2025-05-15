@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 interface DataProps{
     name ?: string,
@@ -25,6 +26,7 @@ interface DataProps{
 export default function SignUp(){
 
     const form = useForm<DataProps>()
+    const router = useRouter()
 
     const onSubmit = async (data : DataProps) => {
 
@@ -34,13 +36,20 @@ export default function SignUp(){
 
         const { name, email, password} = data
         
-        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,{
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`,{
             method: 'POST',
             headers: {
                 "Context-Type":"application/json"
             },
             body: JSON.stringify({ name, email, password})
         })
+
+        if(response.status != 201){
+            return toast.error('Invalid Inputs')
+        }
+
+        toast.success('Sign Up Successfully')
+        router.push('/login')
     }
 
     return (

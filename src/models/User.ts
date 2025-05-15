@@ -23,8 +23,7 @@ const userSchama = new mongoose.Schema<IUser>(
             unique: true
         },
         password: {
-            type: String,
-            required: true
+            type: String
         }
     },
     {
@@ -33,7 +32,7 @@ const userSchama = new mongoose.Schema<IUser>(
 )
 
 // writting a pre hook to prevent the password directly save into database
-userSchama.pre("save", async function (next){
+userSchama.pre("save", async function (){
     // this is whenever their is any modification in the password by the user in first go we need to do it self
     if(this.isModified("password")){
         this.password = await bcrypt.hash(this.password,10)

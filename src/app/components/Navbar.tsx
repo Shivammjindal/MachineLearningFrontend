@@ -1,8 +1,11 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./Toggler"
+import { useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
+import { toast } from "sonner"
 
 interface user {
     name ?: string,
@@ -11,38 +14,67 @@ interface user {
 
 export default function Navbar(){
 
+    const session = useSession();
+
     const [loggedIn, setloggedIn] = useState(false)
-    const [user, setUser] = useState<user | null>({
-        name: 'Shivam Jindal',
-        email: 'shivamjindals2002@gmial.com'
-    })
+    const [user, setUser] = useState<user | null>()
+
+    useEffect(() => {
+        if(session.data?.user){
+            setloggedIn(true);
+            setUser({
+                name : session.data?.user.name as string,
+                email : session.data?.user.email as string
+            })
+        }
+    }, [session])
+
+    const handleSignOut = () => {
+        signOut()
+        toast.success('Logged Out Successfully')
+    }
 
     return (
         <nav className="w-full border-b bg-background shadow-sm">
             <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                 {/* Logo */}
                 <Link href="/" className="text-2xl font-bold text-violet-600 dark:text-violet-400">
-                    GetReel
+                    PayCheck
                 </Link>
-        
-                {/* Navigation Links */}
-                <div className="flex gap-4 items-center">
-                    {loggedIn && <Link href="/your-reels">
-                        <Button variant="ghost" className="text-base">Your Reels</Button>
-                    </Link>}
 
+                <main className="flex gap-4 font-medium dark:text-white text-violet-700">
+                    <Link href={"/aboutus"}>
+                        About Us
+                    </Link>
+                    {loggedIn && <Link href={"/contribute"}>
+                            My Contributions
+                        </Link>
+}
+                </main>
+        
+                <div className="flex gap-4 items-center">
+
+                    {
+                        loggedIn && <div className="font-medium dark:text-white text-violet-700">{ user?.name }</div>
+                    }
                     <ModeToggle/>
                     {
-                        loggedIn && <div className="font-medium">Hi { user?.name }</div>
-                    }
-                    {!loggedIn && <Link href="/login">
+                    !loggedIn && <Link href="/login">
                         <Button variant="outline" className="text-base">Login</Button>
                     </Link>}
-                    {!loggedIn && <Link href="/signup">
-                        <Button className="text-base bg-violet-600 hover:bg-violet-700 text-white">
-                        Signup
+                    {
+                        !loggedIn && <Link href="/signup">
+                            <Button className="text-base bg-violet-600 hover:bg-violet-700 text-white">
+                                Signup
+                            </Button>
+                        </Link>
+                    }
+                    {
+                    loggedIn && 
+                        <Button onClick={handleSignOut} className="text-base bg-violet-600 hover:bg-violet-700 text-white">
+                            Logout
                         </Button>
-                    </Link>}
+                    }
                 </div>
             </div>
         </nav>
