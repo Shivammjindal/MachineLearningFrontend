@@ -89,19 +89,6 @@ export default function SignUp(){
                                 )}
                             />
                              <div className="mt-6 space-y-2">
-                                <Button
-                                    variant="outline"
-                                    className="w-full flex items-center gap-2 justify-center border-violet-300 dark:border-violet-600 text-violet-900 dark:text-violet-100 hover:bg-violet-50 dark:hover:bg-violet-900"
-                                    onClick={
-                                        () => signIn("google").then(() => {
-                                            toast.success('Logged In Successfully')
-                                        })
-                                        
-                                    }
-                                >
-                                <BsGoogle className="w-5 h-5" />
-                                    Continue with Google
-                                </Button>
 
                                 <Button
                                     variant="outline"
