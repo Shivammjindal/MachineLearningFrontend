@@ -52,6 +52,7 @@ export default function ContributionForm() {
     }
 
     try {
+      console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/machine`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
