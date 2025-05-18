@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/form"
 import Navbar from "../components/Navbar"
 import { toast } from "sonner"
-import { useSession } from "next-auth/react"
-import Image from "next/image"
 
 interface DataProps {
   cardno: string,
@@ -29,8 +27,9 @@ interface DataProps {
 }
 
 export default function ContributionForm() {
-  const session = useSession()
+
   const [open, setOpen] = useState(false)
+  const [result, setResult] = useState(null)
 
   const form = useForm<DataProps>({
     defaultValues: {
@@ -53,14 +52,17 @@ export default function ContributionForm() {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/addtransaction`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/machine`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user: session.data?.user.email,
           ...data
         }),
       })
+
+      const { prediction } = await response.json()
+      console.log(prediction)
+      setResult(prediction)
 
       if (!response.ok) return toast.error('Invalid Inputs Entered')
 
@@ -167,7 +169,7 @@ export default function ContributionForm() {
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} min={0}/>
+                      <Input type="number" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -175,20 +177,30 @@ export default function ContributionForm() {
               />
 
               {/* Type of Goods */}
-              <FormField
+             <FormField
                 control={form.control}
                 name="TypeOfGoods"
                 rules={{ required: "Type of goods is required" }}
                 render={({ field }) => (
-                  <FormItem>
+                    <FormItem>
                     <FormLabel>Type of Goods</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g. Electronics" />
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select type of goods" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Grocery">Grocery</SelectItem>
+                            <SelectItem value="Luxury Items">Luxury Items</SelectItem>
+                            <SelectItem value="Electronics">Electronics</SelectItem>
+                            <SelectItem value="Furniture">Furniture</SelectItem>
+                        </SelectContent>
+                        </Select>
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
+                    </FormItem>
                 )}
-              />
+            />
 
               {/* Location */}
               <FormField
@@ -214,17 +226,17 @@ export default function ContributionForm() {
           </Form>
 
           {/* Thank You Dialog */}
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Thank You!</DialogTitle>
-                <Image src="https://media.istockphoto.com/id/1397892955/photo/thank-you-message-for-card-presentation-business-expressing-gratitude-acknowledgment-and.jpg?s=612x612&w=0&k=20&c=7Lyf2sRAJnX_uiDy3ZEytmirul8pyJWm4l2fxiUtdvk=" alt="" width={500} height={500} />
-                <DialogDescription className="flex justify-center text-xl text-violet-600 dark:text-violet-300">
-                  We appreciate your contribution.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+        {result &&    <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Result : </DialogTitle>
+                    <DialogDescription className="flex justify-center text-xl text-violet-600 dark:text-violet-300"> 
+                    {result}
+                    </DialogDescription>
+                </DialogHeader>
+                </DialogContent>
+            </Dialog>
+        }
         </div>
       </div>
     </div>

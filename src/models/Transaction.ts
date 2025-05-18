@@ -1,30 +1,54 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document, model } from "mongoose";
 
-export interface ITransaction {
-    _id : mongoose.Types.ObjectId,
-    user : mongoose.Types.ObjectId,
-    cardno : string,
-    type : string,
-    device : string
+// TypeScript Interface
+export interface ITransaction extends Document {
+  user: mongoose.Types.ObjectId;
+  cardno: string;
+  CardType: string;
+  Time: string;       // e.g. "14:25:37"
+  Date: string;       // e.g. "2025-05-17"
+  Amount: number;
+  TypeOfGoods: string;
+  Location: string;
 }
 
-const transactionSchema = new mongoose.Schema({
-    user:{
-        type: mongoose.Types.ObjectId,
-        required: true
-    },
-    cardno : {
-        type: String,
-        required: true
-    },
-    type : {
-        type: String,
-        required: true
-    },
-    device : {
-        type : String,
-        required: true
-    }
-})
+// Schema Definition
+const transactionSchema: Schema<ITransaction> = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "users", // optional: reference to user model
+  },
+  cardno: {
+    type: String,
+    required: true,
+  },
+  CardType: {
+    type: String,
+    required: true,
+  },
+  Time: {
+    type: String,
+    required: true,
+  },
+  Date: {
+    type: String,
+    required: true,
+  },
+  Amount: {
+    type: Number,
+    required: true,
+  },
+  TypeOfGoods: {
+    type: String,
+    required: true,
+  },
+  Location: {
+    type: String,
+    required: true,
+  },
+});
 
-export const Transaction = mongoose.models.transactions || mongoose.model<ITransaction>('transactions',transactionSchema)
+// Model Export
+export const Transaction =
+  mongoose.models.Transaction || model<ITransaction>("Transaction", transactionSchema);

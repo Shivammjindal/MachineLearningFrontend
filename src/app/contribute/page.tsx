@@ -10,8 +10,16 @@ import { FadeLoader } from "react-spinners"
 import { toast } from 'sonner'
 
 interface contribute{
+  _id: string,
+  user: string,
   cardno: string,
-  type: string
+  CardType: string,
+  Time: string,
+  Date: string,
+  Amount: number,
+  TypeOfGoods: string,
+  Location: string,
+  __v: 0
 }
 
 export default function ContributionList() {
@@ -28,10 +36,12 @@ export default function ContributionList() {
     }
 
     const data = await response.json()
+    console.log(data)
     const contribution = data || []
     console.log(contribution)
     setLoading(false)
     setContributions(contribution)
+
   }
 
   useEffect(() => {
@@ -70,8 +80,15 @@ export default function ContributionList() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-2">{contrib.cardno}</p>
-                <p className="text-muted-foreground mb-2">{contrib.type}</p>
+                <div className='flex gap-5'>
+                    <p className="text-muted-foreground mb-2">{contrib.cardno}</p>
+                    <p className="text-muted-foreground mb-2">{contrib.CardType}</p>
+                </div>
+                <div className='flex gap-5'>
+                  <p className="text-muted-foreground mb-2">{contrib.Time}</p>
+                  <p className="text-muted-foreground mb-2">{contrib.Location}</p>
+                  <p className="text-muted-foreground mb-2">{contrib.TypeOfGoods}</p>
+                </div>
               </CardContent>
             </Card>
         ))}

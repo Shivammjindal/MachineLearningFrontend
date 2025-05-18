@@ -16,8 +16,8 @@ export async function GET(){
             email : session?.user?.email
         })
 
-        if(!session?.user){
-            return NextResponse.json('no user fount',{ status: 401 })
+        if(!session?.user?.email){
+            return NextResponse.json('Unauthotised',{ status: 401 })
         }
 
         const contributions = await Transaction.find({

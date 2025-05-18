@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
       },
       {
         hostname:"cdn-icons-png.flaticon.com"
+      },{
+        hostname:"media.istockphoto.com"
       }
     ]
   }
