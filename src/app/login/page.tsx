@@ -8,7 +8,7 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form"
-import { BsGoogle, BsGithub, BsArrowRight } from "react-icons/bs"
+import { BsGithub, BsArrowRight } from "react-icons/bs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
