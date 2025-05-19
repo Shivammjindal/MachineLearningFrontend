@@ -29,6 +29,7 @@ interface DataProps {
 export default function ContributionForm() {
 
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
 
   const form = useForm<DataProps>({
@@ -51,6 +52,8 @@ export default function ContributionForm() {
       return toast.error('Invalid Card Number')
     }
 
+    setLoading(true)
+
     try {
       console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/machine`, {
@@ -72,8 +75,9 @@ export default function ContributionForm() {
       return toast.error('An Error Occured')
     }
 
+    setLoading(false)
     setOpen(true)
-    toast.success('Your contribution recorded successfully')
+    toast.success('Transaction Check Success')
     form.reset()
   }
 
@@ -220,7 +224,7 @@ export default function ContributionForm() {
               />
 
               {/* Submit Button */}
-              <Button type="submit" className="w-full bg-violet-700 hover:bg-violet-800 text-white">
+              <Button disabled={loading} type="submit" className="w-full bg-violet-700 hover:bg-violet-800 disabled:bg-violet-500 text-white">
                 Submit
               </Button>
             </form>
